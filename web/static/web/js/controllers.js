@@ -41,27 +41,39 @@
                     $state.transitionTo('login',{});
                   }
                                     
-                 
+                  $scope.getRecent = function() {
+                    $scope.last_help_entry = null;
+                    Help.query(function(obj) {
+                        // !!!You must always do a $scope.$apply in a parse callback for changes to be 
+                        //    noticed by Angular
+                        $scope.$apply(function() {
+                          $scope.last_help_entry = obj[0];
+                        });
+                      }, // end anonymouse function
+                      {}, // end filterVals
+                      {'limit':1,'order_by':'createdAt','order_dir':'desc'} // end options
+                    ); // end Help.query()
+                  }
+
                   $scope.isLogin = false;
                   $scope.user = Parse.User.current();
 
-                  if (  ($scope.user == null) && (!$state.is('login')) ) {
-                      $scope.goLogin();
-                  } else if ( ($scope.user != null) && (!$scope.isActive('home')) ) {
-                    $scope.goHome();
+                  if ($scope.user != null) {
+                    $scope.getRecent();
                   }
 
-                  $scope.last_help_entry = null;
-                  Help.query(function(obj) {
-                      // !!!You must always do a $scope.$apply in a parse callback for changes to be 
-                      //    noticed by Angular
-                      $scope.$apply(function() {
-                        $scope.last_help_entry = obj[0];
-                      });
-                    }, // end anonymouse function
-                    {}, // end filterVals
-                    {'limit':1,'order_by':'createdAt','order_dir':'desc'} // end options
-                  ); // end Help.query()
+                  if (  ($scope.user == null) && (!$state.is('login')) ) {
+                      $scope.goLogin();
+                  } else if ($scope.user != null) {
+                    $scope.getRecent();
+                    if (!$scope.isActive('home')) {
+                      $scope.goHome();
+                    }
+                  }
+
+                  
+
+
               
               },
               'LoginCtrl':
