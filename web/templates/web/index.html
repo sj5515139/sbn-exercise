@@ -27,8 +27,8 @@
           <li><a ng-click="goNew()" href="javascript:;">New</a></li>
           <!-- TODO: add missing Update tab -->
         </ul>
-        <ul ng-show="last_help_entry != null" class="nav pull-right">
-          <li>
+        <ul class="nav pull-right">
+          <li ng-show="last_help_entry != null">
             {# Note the use of the verbatim tag. That's because both django and angular use the {{ }} syntax #}
             {# Using verbatim tells django to ignore anything within that tag. This is only necessary within #}
             {# this index.html file since the partials are served as statics and not django templates #}
@@ -42,6 +42,7 @@
             {% endverbatim %}
 
           </li>
+          <li><a ng-click="logout()" href="javascript:;">Log Out</a></li>
         </ul>
       </div>
     </div>

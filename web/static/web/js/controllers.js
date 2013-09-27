@@ -1,7 +1,7 @@
   extend(app,
    {exercise:{ 
       controllers : { 'MainCtrl':
-                function($scope,$state,Help) {
+                function($scope,$state,$location,Help) {
 
                   // initialize parse with the hardcoded keys
                   app.database.init.default_init();
@@ -37,7 +37,7 @@
                   
                   $scope.logout = function() {
                     Parse.User.logOut();
-                    $scope.user == null;
+                    $scope.user = null;
                     $state.transitionTo('login',{});
                   }
                                     
@@ -58,16 +58,19 @@
                   $scope.isLogin = false;
                   $scope.user = Parse.User.current();
 
-                  if ($scope.user != null) {
-                    $scope.getRecent();
-                  }
+                  $scope.$watch('user',function() {
+                    if ($scope.user != null) {
+                      if ($scope.last_help_entry == null) {
+                        $scope.getRecent();
+                      }
+                    }
+                  });
 
-                  if (  ($scope.user == null) && (!$state.is('login')) ) {
-                      $scope.goLogin();
-                  } else if ($scope.user != null) {
-                    $scope.getRecent();
-                    if (!$scope.isActive('home')) {
-                      $scope.goHome();
+                  if ($location.path() == '') {
+                    if ($scope.user == null) {
+                      $state.transitionTo('login',{});
+                    } else {
+                      $state.transitionTo('home',{});
                     }
                   }
 
@@ -86,19 +89,24 @@
                 $scope.errorMsg = '';
                 $scope.infoMsg = '';
                 
+                if ( ($scope.$parent.user != null) && (!$scope.$parent.isActive('home')) ) {
+                    $scope.$parent.goHome();
+                }
+
                 // if we're running this, we're indeed at a login
                 $scope.$parent.isLogin = true;
-
-                if ( ($scope.user != null) && ($state.is('login')) ) {
-                      $scope.$parent.goHome();
-                }
 
                 $scope.login = function() {
                   
                   Parse.User.logIn($scope.username,$scope.password).then(
                     function(user){
+
                       $scope.$apply(function() {
                         user.fetch().then( function() {
+                          if ($scope.$parent == null) {
+                            // not sure why this happens. 
+                            return;
+                          }
                           $scope.$parent.user = user;
                           $scope.$parent.goHome();                          
                         });
@@ -125,6 +133,10 @@
               },
             'HomeCtrl':
                 function($scope,$state,$location) {
+                  if (  ($scope.$parent.user == null) && (!$state.is('login')) ) {
+                      $scope.$parent.goLogin();
+                  }
+
                   $scope.goList = function() {
                     $state.transitionTo('home.list', {})
                   }
