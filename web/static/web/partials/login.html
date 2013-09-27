@@ -1,0 +1,22 @@
+
+<style>
+	/* these are just here for simplicity. They should really go in a site-wide CSS file */
+	div.app-login { margin-top: 100px;}
+</style>
+
+<div class="row app-login">
+    <div class="span4 offset4">
+      <div class="well">
+        <legend>Sign in</legend>
+        <form method="POST" action="" accept-charset="UTF-8">
+            <div ng-show="isError" class="alert alert-error">
+                {{errorMsg}}
+            </div>      
+            <input class="span3" placeholder="Username" type="text" ng-model="username" name="username">
+            <input class="span3" placeholder="Password" type="password" ng-model="password" name="password"> 
+
+            <button class="btn-info btn" type="button" ng-click="login()">Login</button>      
+        </form>    
+      </div>
+    </div>
+</div>

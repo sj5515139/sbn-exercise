@@ -26,8 +26,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 # setting points here.
 from django.core.wsgi import get_wsgi_application
 from dj_static import Cling
+import os
 
-application = Cling(get_wsgi_application())
+DEBUG = os.environ.get('APP_DEBUG',1)
+if not DEBUG:
+	application = Cling(get_wsgi_application())
+else:
+	application = get_wsgi_application()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication

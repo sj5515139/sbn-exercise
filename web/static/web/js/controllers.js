@@ -1,21 +1,34 @@
   extend(app,
    {exercise:{ 
       controllers : { 'MainCtrl':
-                function($scope,$state,$location) {
+                function($scope,$state,Help) {
 
                   // initialize parse with the hardcoded keys
                   app.database.init.default_init();
 
                   $scope.goLogin = function() {
                     $scope.isLogin = true;
-                    $location.path('/login');
-                    //$state.transitionTo('login',{});
+                    $state.transitionTo('login',{});
                   }
 
                   $scope.goHome = function() {
                     $scope.isLogin = false; //probably not necessary
-                    $location.path('/home');
-                    //$state.transitionTo('home',{});
+                    $state.transitionTo('home',{});
+                  }
+
+                  $scope.goList = function() {
+                    $scope.isLogin = false; //probably not necessary
+                    $state.transitionTo('home.list',{});
+                  }
+
+                  $scope.goNew = function() {
+                    $scope.isLogin = false; //probably not necessary
+                    $state.transitionTo('home.new',{});
+                  }
+
+                  $scope.goUpdate = function(obj) {
+                    $scope.isLogin = false; //probably not necessary
+                    $state.transitionTo('home.update',{objectId:obj.id});
                   }
 
                   $scope.isActive = function(route) {
@@ -26,19 +39,33 @@
                     Parse.User.logOut();
                     $scope.user == null;
                     $state.transitionTo('login',{});
-                    //$location.path('/');
                   }
                                     
                  
                   $scope.isLogin = false;
+                  $scope.user = Parse.User.current();
 
                   if (  ($scope.user == null) && (!$state.is('login')) ) {
                       $scope.goLogin();
-                  } 
+                  } else if ( ($scope.user != null) && (!$scope.isActive('home')) ) {
+                    $scope.goHome();
+                  }
+
+                  $scope.last_help_entry = null;
+                  Help.query(function(obj) {
+                      // !!!You must always do a $scope.$apply in a parse callback for changes to be 
+                      //    noticed by Angular
+                      $scope.$apply(function() {
+                        $scope.last_help_entry = obj[0];
+                      });
+                    }, // end anonymouse function
+                    {}, // end filterVals
+                    {'limit':1,'order_by':'createdAt','order_dir':'desc'} // end options
+                  ); // end Help.query()
               
               },
               'LoginCtrl':
-                  function($scope, $state,$routeParams, $location, $http) {
+                  function($scope, $state) {
                 $scope.title = 'Inspection Login';
                 $scope.hideHeader = true;
                 $scope.username = '';
@@ -49,6 +76,10 @@
                 
                 // if we're running this, we're indeed at a login
                 $scope.$parent.isLogin = true;
+
+                if ( ($scope.user != null) && ($state.is('login')) ) {
+                      $scope.$parent.goHome();
+                }
 
                 $scope.login = function() {
                   
@@ -81,7 +112,7 @@
 
               },
             'HomeCtrl':
-                function($scope,$state,$location,$routeParams) {
+                function($scope,$state,$location) {
                   $scope.goList = function() {
                     $state.transitionTo('home.list', {})
                   }
@@ -89,13 +120,11 @@
                     $state.transitionTo('home.update', {})
                     
                   }
-                  $scope.goAssets = function() {
-                    $state.transitionTo('home.assets', {})
+                  $scope.goNew = function() {
+                    $state.transitionTo('home.new', {})
                   }
 
-                  if ($state.is('home')) {
-                    $scope.goCompleted();
-                  }
+                
                 },
               'HomeListCtrl':
                 function($scope,$state,$location,$routeParams) {
@@ -103,13 +132,19 @@
 
                 },
               'HomeNewCtrl':
-                function($scope,$state,ReportTemplate) {
+                function($scope,$state) {
                   
                 },
               'HomeNewCtrl':
-                function($scope,$state,ReportTemplate) {
+                function($scope,$state) {
+                  
+                },
+              'HomeUpdateCtrl':
+                function($scope,$state,$stateParams) {
+                  $scope.object_id = $stateParams.objectId ? $stateParams.objectId : null;
                   
                 }
+                
             
           } // controllers
     } // exercise

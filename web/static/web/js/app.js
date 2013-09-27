@@ -18,7 +18,7 @@ extend(app,
         {database:
           { init:{
              default_init: function() {
-                Parse.initialize('wWEy5IgJ7J77iVgB6UZRbpEzaOy80t4BrEQeWcgk','14XH6d74TJPZbh5MjWPDUAbZOi17BYmnLmaY6Ywh');
+                Parse.initialize('k3FQqzuc1qKd07FbaXNTf5eI6VgG0NxnXdlV3KNM','rI2KgjChdQSmggmVz4Aod3OUCnL9mrgWvArY3FU5');
              },
              custom_init: function(app_id,js_key) {
                 Parse.initialize(app_id,js_key);
@@ -78,6 +78,14 @@ extend(app,
                   }
                   if ((typeof options.includeFields != 'undefined') && (options.includeFields != null)) {
                     query = query.include(options.includeFields);
+                  }
+
+                  if ((typeof options.order_by != 'undefined') && (options.order_by != null) && (typeof options.order_dir != 'undefined') && (options.order_dir != null) ) {
+                    if (options.order_dir == 'desc') {
+                      query = query.descending(options.order_by);
+                    } else {
+                      query = query.ascending(options.order_by);
+                    }
                   }
                   return query;
                },

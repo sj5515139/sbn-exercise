@@ -18,7 +18,37 @@
   </head>
   <body ng-controller="app.exercise.controllers.MainCtrl">
 
-<h1>hello</h1>
+    <div class="navbar navbar-static-top" ng-show="!isActive('login')">
+      <div class="navbar-inner">
+        <a class="brand" ng-click="goHome()" href="javascript:;">SBN Exercise</a>
+        <ul class="nav">
+          <li ng-class="active"><a ng-click="goHome()" href="javascript:;">Home</a></li>
+          <li><a ng-click="goList()" href="javascript:;">List</a></li>
+          <li><a ng-click="goNew()" href="javascript:;">New</a></li>
+          <!-- TODO: add missing Update tab -->
+        </ul>
+        <ul ng-show="last_help_entry != null" class="nav pull-right">
+          <li>
+            {# Note the use of the verbatim tag. That's because both django and angular use the {{ }} syntax #}
+            {# Using verbatim tells django to ignore anything within that tag. This is only necessary within #}
+            {# this index.html file since the partials are served as statics and not django templates #}
+
+            {% verbatim %}
+            <div>
+                <h5>Last Entry:</h5>
+                <!-- All parse object fields outside of "id" must be retrieved using get() -->
+                <a href="javascript:;" ng-click="goUpdate(last_help_entry)">{{ last_help_entry.get('question') }}</a>
+            </div>
+            {% endverbatim %}
+
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container" ui-view>
+      <p>If you can see this, something is broken</p>
+    </div>
 
   </body>
 </html>

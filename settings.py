@@ -1,6 +1,7 @@
 # Django settings for web project.
+import os
+DEBUG = os.environ.get('APP_DEBUG',1)
 
-DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

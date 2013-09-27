@@ -1,6 +1,8 @@
-dotcloud==0.4.6
-dotcloud.cli==0.4.6
+Django==1.5.4
+distribute==0.6.34
+dj-static==0.0.5
 gunicorn==17.5
 requests==1.2.3
+static==0.4
 virtualenv==1.7.1.2
 wsgiref==0.1.2
